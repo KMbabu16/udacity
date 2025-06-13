@@ -1,18 +1,39 @@
 version: 2.1
 orbs:
-  # orgs contain basc recipes and reproducible actions (install node, aws, etc.)
   node: circleci/node@4.1.0
-  # different jobs are calles later in the workflows sections
 jobs:
   build:
     docker:
-      # the base image can run most needed actions with orbs
-      - image: "cimg/base:stable"
+      - image: cimg/base:stable
     steps:
       - node/install
       - checkout
-      # install dependencies in both apps
       - run:
           name: hello
           command: |
             echo "hello-world"
+  e2e-tests:
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.43.1-jammy
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm ci
+      - run:
+          name: Install Playwright Browsers
+          command: npx playwright install --with-deps
+      - run:
+          name: Run Playwright E2E Tests
+          command: npx playwright test
+      - store_artifacts:
+          path: playwright-report
+          destination: playwright-report
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - e2e-tests:
+          requires:
+            - build
