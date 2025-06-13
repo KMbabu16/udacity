@@ -28,6 +28,14 @@ jobs:
           name: Build Back-End
           command: |
             npm run backend:build
+      - run:
+          name: Start Front-End
+          command: |
+            npm run frontend:start
+      - run:
+          name: Start Back-End
+          command: |
+            npm run backend:start
 workflows:
   version: 2.1
   build_and_deploy:
