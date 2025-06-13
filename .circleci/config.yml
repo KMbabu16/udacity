@@ -12,6 +12,7 @@ jobs:
       - run:
           name: Front-End Install
           command: |
+            npm install -g npm@latest || true
             npm run frontend:install
       - run:
           name: Back-End Install
